@@ -1,7 +1,6 @@
 package api.security;
 
 
-import api.config.EnvConfiguration;
 import api.exception.CustomException;
 import api.model.JwtRequest;
 import io.jsonwebtoken.Claims;
@@ -11,6 +10,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +22,9 @@ import java.util.Date;
 
 public class JwtTokenProvider {
 
-    private final EnvConfiguration envConfiguration = new EnvConfiguration();
+    Environment env = new StandardEnvironment();
 
-    private final String secretKey = envConfiguration.getProperty("SECRET_KEY");
+    private final String secretKey = env.getProperty("SECRET_KEY");
 
     @Value("${jwt.token.expire-length}")
     private long validityInMilliseconds;
