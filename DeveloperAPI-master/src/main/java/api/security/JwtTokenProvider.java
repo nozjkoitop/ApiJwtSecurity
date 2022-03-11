@@ -1,5 +1,7 @@
 package api.security;
 
+
+import api.config.EnvConfiguration;
 import api.exception.CustomException;
 import api.model.JwtRequest;
 import io.jsonwebtoken.Claims;
@@ -16,24 +18,25 @@ import java.util.Date;
 
 @Slf4j
 @Component
+
 public class JwtTokenProvider {
 
-    @Value("${jwt.token.secret-key}")
-    private String secretKey;
+    private final EnvConfiguration envConfiguration = new EnvConfiguration();
+
+    private final String secretKey = envConfiguration.getProperty("SECRET_KEY");
 
     @Value("${jwt.token.expire-length}")
     private long validityInMilliseconds;
 
     public String createToken(@NonNull JwtRequest jwtRequest) {
         Date now = new Date();
-        final String token = Jwts.builder()
+        return Jwts.builder()
                 .setIssuer(jwtRequest.getIssuer())
                 .setSubject(jwtRequest.getSubject())
                 .setExpiration(new Date(now.getTime() + validityInMilliseconds))
                 .claim("roles", jwtRequest.getRoles())
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-        return token;
     }
 
     public boolean validateToken(@NonNull String token) {

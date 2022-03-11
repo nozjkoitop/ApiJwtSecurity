@@ -2,13 +2,14 @@ package api;
 
 import api.model.Developer;
 import api.repository.DeveloperRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
@@ -22,43 +23,53 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
 @ComponentScan("api")
 class ApiApplicationTests {
 
+    private static Developer developer;
+
     @Autowired
     DeveloperRepository developerRepository;
+
+    @BeforeAll
+    static void setUp() {
+        developer = new Developer(1L, "Misha", "Nozjkoitop@mail.ru");
+    }
 
     @Test
     @Order(1)
     public void testCreate() {
-        Developer developer = new Developer();
-        developer.setName("Vasya");
-        developer.setEmail("VasyaVasin@yandex.ru");
+        Developer developerNew = new Developer();
+        developerNew.setName("Vasya");
+        developerNew.setEmail("VasyaVasin@yandex.ru");
+        developerRepository.save(developerNew);
         developerRepository.save(developer);
-        assertNotNull(developerRepository.findById(developer.getId()).get());
+        assertNotNull(developerRepository.findById(developerNew.getId()).get());
     }
 
     @Test
     @Order(2)
     public void testGetAllDevelopers() {
+        developerRepository.save(developer);
         List<Developer> developerList = developerRepository.findAll();
         assertThat(developerList).size().isGreaterThan(0);
     }
 
     @Test
     @Order(3)
-    public void testRead() {
-        Developer developer = developerRepository.findById(1L).get();
+    public void testReadDevelopersEmail() {
+        developerRepository.save(developer);
+        Developer developerToRead = developerRepository.findById(1L).get();
         assertEquals("Nozjkoitop@mail.ru", developer.getEmail());
     }
 
     @Test
     @Order(4)
-    public void testSearchByEmail() {
-        developerRepository.findDeveloperByEmail("Nozjkoitop@mail.ru");
-        assertEquals("Misha", developerRepository.findById(1L).get().getName());
+    public void findByName() {
+        developerRepository.findByName("Misha");
+        assertEquals("Nozjkoitop@mail.ru", developer.getEmail());
     }
 
 }
