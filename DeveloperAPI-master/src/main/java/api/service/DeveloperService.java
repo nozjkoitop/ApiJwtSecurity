@@ -2,12 +2,12 @@ package api.service;
 
 
 import api.dto.DeveloperDto;
-import api.exception.CustomException;
 import api.exception.DeveloperNotFoundException;
+import api.exception.IncorrectDataException;
 import api.model.Developer;
 import api.repository.DeveloperRepository;
+import api.util.Validator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,30 +21,38 @@ import java.util.List;
 
 public class DeveloperService {
 
+
+    private final Validator validator;
+
     private final DeveloperRepository developerRepository;
 
-    public void delete(String Name) {
-        developerRepository.deleteByName(Name);
+    public void delete(String name) {
+        developerRepository.deleteByName(name);
     }
 
-    public Developer search(String Name) {
-        Developer developer = developerRepository.findByName(Name);
-        if (developer == null) {
-            throw new CustomException("Developer doesn't exist", HttpStatus.NOT_FOUND);
+    public ResponseEntity<Developer> search(@PathVariable String name) {
+        Developer developer = developerRepository.findByName(name);
+        if (developer != null) {
+            return ResponseEntity.ok(developer);
+        } else {
+            throw new DeveloperNotFoundException("Not Found");
         }
-        return developer;
     }
 
     public List<Developer> findAll() {
         return developerRepository.findAll();
     }
 
-    public Developer create(@RequestBody DeveloperDto developerDto) {
-        Developer developer = new Developer();
-        developer.setName(developerDto.getName());
-        developer.setEmail(developerDto.getEmail());
-        developerRepository.save(developer);
-        return developer;
+    public ResponseEntity<Developer> create(@RequestBody DeveloperDto developerDto) {
+        if (developerRepository.findByName(developerDto.getName()) == (null) && validator.nameValidator(developerDto.getName())) {
+            Developer developer = new Developer();
+            developer.setName(developerDto.getName());
+            developer.setEmail(developerDto.getEmail());
+            developerRepository.save(developer);
+            return ResponseEntity.ok(developer);
+        } else {
+            throw new IncorrectDataException("Already exists or incorrect name format");
+        }
     }
 
     public ResponseEntity<Developer> updateDeveloper(@PathVariable long id, @RequestBody DeveloperDto developerDto) {

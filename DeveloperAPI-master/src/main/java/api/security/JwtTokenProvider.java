@@ -15,6 +15,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Date;
 
 @Slf4j
@@ -31,7 +32,17 @@ public class JwtTokenProvider {
 
     public String createToken(@NonNull JwtRequest jwtRequest) {
         Date now = new Date();
-        return Jwts.builder()
+        if (!jwtRequest.getIssuer().equals("GP")){
+            return Jwts.builder()
+                    .setIssuer(jwtRequest.getIssuer())
+                    .setSubject(jwtRequest.getSubject())
+                    .setExpiration(new Date(now.getTime() + validityInMilliseconds))
+                    .claim("roles", Collections.emptyList())
+                    .signWith(SignatureAlgorithm.HS256, secretKey)
+                    .compact();
+        }
+
+        return  Jwts.builder()
                 .setIssuer(jwtRequest.getIssuer())
                 .setSubject(jwtRequest.getSubject())
                 .setExpiration(new Date(now.getTime() + validityInMilliseconds))
@@ -40,15 +51,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public boolean validateToken(@NonNull String token) {
+    public boolean validateToken(@NonNull String  token) {
         try {
-            final Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-            if (!claims.getIssuer().equals("GP")) {
-                throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Expired or invalid JWT", HttpStatus.UNAUTHORIZED);
         }
 
     }

@@ -20,6 +20,7 @@ import java.util.List;
 public interface DeveloperRepository extends JpaRepository<Developer, Long> {
     List<Developer> findDeveloperByEmail(String email);
 
+    @Transactional
     Developer findByName(String name);
 
     @Transactional

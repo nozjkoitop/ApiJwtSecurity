@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
+
 public class CustomException extends RuntimeException {
 
     @Serial
