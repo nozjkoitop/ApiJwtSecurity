@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JwtAuthentication {
@@ -22,6 +21,6 @@ public final class JwtAuthentication {
         final List<String> roles = claims.get("roles", List.class);
         return roles.stream()
                 .map(Role::valueOf)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

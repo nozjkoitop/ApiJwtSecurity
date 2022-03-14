@@ -40,7 +40,7 @@ class ApiApplicationTests {
 
     @Test
     @Order(1)
-    public void testCreate() {
+    void testCreate() {
         Developer developerNew = new Developer();
         developerNew.setName("Vasya");
         developerNew.setEmail("VasyaVasin@yandex.ru");
@@ -51,15 +51,15 @@ class ApiApplicationTests {
 
     @Test
     @Order(2)
-    public void testGetAllDevelopers() {
+    void testGetAllDevelopers() {
         developerRepository.save(developer);
         List<Developer> developerList = developerRepository.findAll();
-        assertThat(developerList).size().isGreaterThan(0);
+        assertThat(developerList).size().isPositive();
     }
 
     @Test
     @Order(3)
-    public void testReadDevelopersEmail() {
+    void testReadDevelopersEmail() {
         developerRepository.save(developer);
         Developer developerToRead = developerRepository.findById(1L).get();
         assertEquals("Nozjkoitop@mail.ru", developer.getEmail());
@@ -67,7 +67,7 @@ class ApiApplicationTests {
 
     @Test
     @Order(4)
-    public void findByName() {
+    void findByName() {
         developerRepository.findByName("Misha");
         assertEquals("Nozjkoitop@mail.ru", developer.getEmail());
     }

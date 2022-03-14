@@ -33,7 +33,7 @@ public class DevController {
 
     @GetMapping("/developers")
     @PreAuthorize("hasAnyAuthority('USER','HR','ADMIN')")
-    @ApiOperation(value = "${DevController.findAll}", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "${DevController.findAll}", authorizations = {@Authorization(value = "Auth")})
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 401, message = "Unauthorized"),//
@@ -46,7 +46,7 @@ public class DevController {
 
     @DeleteMapping(value = "/{name}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "${DevController.delete}", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "${DevController.delete}", authorizations = {@Authorization(value = "Auth")})
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 401, message = "Unauthorized"),//
@@ -60,7 +60,7 @@ public class DevController {
 
     @GetMapping(value = "developers/{name}")
     @PreAuthorize("hasAnyAuthority('USER','HR','ADMIN')")
-    @ApiOperation(value = "${DevController.search}", response = DeveloperDto.class, authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "${DevController.search}", response = DeveloperDto.class, authorizations = {@Authorization(value = "Auth")})
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"), //
             @ApiResponse(code = 401, message = "Unauthorized"),//
@@ -74,7 +74,7 @@ public class DevController {
 
     @PutMapping(value = "developers/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "{$Developer's modifying}", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "{$Developer's modifying}", authorizations = {@Authorization(value = "Auth")})
     @ApiResponses(value = {//
             @ApiResponse(code = 401, message = "Unauthorized"),//
             @ApiResponse(code = 403, message = "Access denied"), //
@@ -86,7 +86,7 @@ public class DevController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    @ApiOperation(value = "{$DevController.create}", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "{$DevController.create}", authorizations = {@Authorization(value = "Auth")})
     @ApiResponses(value = {//
             @ApiResponse(code = 400, message = "Something went wrong"),
             @ApiResponse(code = 401, message = "Unauthorized"),//
